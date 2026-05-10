@@ -1,0 +1,23 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { GatewayService } from './gateway.service';
+import { CreateGatewayDto } from './dto/create-gateway.dto';
+
+@Controller('gateway')
+export class GatewayController {
+  constructor(private readonly gatewayService: GatewayService) {}
+
+  @Post()
+  create(@Body() createGatewayDto: CreateGatewayDto) {
+    return this.gatewayService.create(createGatewayDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.gatewayService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.gatewayService.findOne(+id);
+  }
+}
