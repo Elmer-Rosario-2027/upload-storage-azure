@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ProcessService } from './process.service';
 import { ReportConsumer } from './report.consumer';
 import { ReportService } from './service/report.service';
 import { ExcelService } from './service/excel.service';
@@ -11,7 +10,6 @@ import { KafkaModule } from 'src/kafka/kafka.module';
   imports: [KafkaModule],
   controllers: [ReportConsumer],
   providers: [
-    ProcessService,
     ReportService,
     ExcelService,
     StorageService,
