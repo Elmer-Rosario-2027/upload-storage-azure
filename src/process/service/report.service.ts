@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { ExcelService } from './excel.service';
 import { StorageService } from './storage.service';
+import { PrismaService } from '../prismaService/prisma.service';
 
 @Injectable()
 export class ReportService {
 
-  private prisma = new PrismaClient();
-
   constructor(
+    private readonly prisma: PrismaService,
     private readonly excelService: ExcelService,
     private readonly storageService: StorageService
   ) {}
@@ -23,13 +22,11 @@ export class ReportService {
       });
     */
     const transactions = await this.prisma.userTransaction.findMany();
-    console.log("##################################################################");
-    const filePath = await this.excelService.generateExcel(transactions);
-    console.log("filePath 000000000000000000000000000000000000000");
-    console.log(filePath);
-    const url = await this.storageService.upload(filePath);
-
+    const { fileName, buffer } = await this.excelService.generateExcel(transactions);
+    console.log(fileName);
+    const url = await this.storageService.upload(fileName, buffer);
     console.log(url);
+    return url;
   }
 }
 

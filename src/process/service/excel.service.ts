@@ -15,7 +15,7 @@ export class ExcelService {
       { header: 'USER', key: 'userId', width: 20 },
       { header: 'TYPE', key: 'transactionType', width: 20 },
       { header: 'AMOUNT', key: 'amount', width: 15 },
-      { header: 'STATUS', key: 'status', width: 15 }
+      { header: 'STATUS', key: 'status', width: 15 },
     ];
 
     data.forEach(item => {
@@ -23,14 +23,10 @@ export class ExcelService {
     });
 
     const fileName =`report-${uuid()}.xlsx`;
-    console.log("++++++++++++++++++++++++++++++++++++++  " + fileName)
-    const path = `./tmp/${fileName}`;
-    try {
-      await workbook.xlsx.writeFile(path);
-    } catch (error) {
-      console.error('Error writing Excel file:', error);
-      throw error;
-    }
-    return path;
+    const buffer =await workbook.xlsx.writeBuffer();
+    return {
+      fileName,
+      buffer: Buffer.from(buffer),
+    };
   }
 }

@@ -1,9 +1,6 @@
 import { BlobServiceClient } from '@azure/storage-blob';
 import { Injectable } from '@nestjs/common';
 
-import * as fs from 'fs';
-import * as path from 'path';
-
 @Injectable()
 export class StorageService {
 
@@ -17,39 +14,33 @@ export class StorageService {
       );
   }
 
-  async upload(filePath: string) {
+  async upload(
+    fileName: string,
+    buffer: Buffer,
+  ) {
 
     const containerName =
       process.env.AZURE_STORAGE_CONTAINER!;
 
     const containerClient =
       this.blobServiceClient.getContainerClient(
-        containerName
+        containerName,
       );
 
-    // crea el container si no existe
     await containerClient.createIfNotExists();
 
-    // obtiene nombre archivo
-    const fileName = path.basename(filePath);
-
-    // cliente blob
     const blockBlobClient =
       containerClient.getBlockBlobClient(
-        fileName
+        fileName,
       );
 
-    // leer archivo
-    const fileBuffer = fs.readFileSync(filePath);
-
-    // upload
-    await blockBlobClient.uploadData(fileBuffer);
+    await blockBlobClient.uploadData(buffer);
 
     return {
       message: 'Archivo subido correctamente',
       fileName,
       container: containerName,
-      url: blockBlobClient.url
+      url: blockBlobClient.url,
     };
   }
 }
