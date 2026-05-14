@@ -22,6 +22,6 @@ export class GatewayService
   async processReport(payload: any) {
 
     await this.kafkaClient.emit('report-requested', payload);
-    return { message: 'Proceso enviado a Kafka'};
+    return { message: 'reporte en proceso, se te enviara al correo una vez listo' };
   }
 }

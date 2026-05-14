@@ -3,17 +3,17 @@ import {
   Payload,
 } from '@nestjs/microservices';
 import { Controller } from '@nestjs/common';
-import { ReportService } from './service/report.service';
+import { SagaService } from './saga.service';
 
 
 @Controller()
 export class ReportConsumer {
 
-  constructor(private readonly reportService: ReportService) {}
+  constructor(private readonly sagaService: SagaService) {}
 
  @EventPattern('report-requested')
   async handleReport(@Payload() payload: any) {
-    console.log('Received report request :::::::::::::::::::::: ', payload);
-    return await this.reportService.process(payload);
+    console.log('Received report request ', payload);
+    return await this.sagaService.process(payload);
   }
 }
