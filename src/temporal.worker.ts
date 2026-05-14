@@ -1,5 +1,4 @@
 import { Worker } from '@temporalio/worker';
-import * as activities from './process/activities';
 import { DatabaseService } from './process/service/database.service';
 import { ExcelService } from './process/service/excel.service';
 import { StorageService } from './process/service/storage.service';
@@ -19,9 +18,9 @@ export async function run() {
   const worker = await Worker.create({
     workflowsPath: require.resolve('./process/report.workflow'),
     activities: {
-      getTransactionsActivity: (payload) => activities.getTransactionsActivity(payload, dbService),
-      generateExcelActivity: (transactions) => activities.generateExcelActivity(transactions, excelService),
-      uploadToStorageActivity: (excelResult) => activities.uploadToStorageActivity(excelResult, storageService),
+      getTransactionsActivity: dbService.getTransactions.bind(dbService),
+      generateExcelActivity: excelService.generateExcel.bind(excelService),
+      uploadToStorageActivity: storageService.upload.bind(storageService),
     },
     taskQueue: 'report-queue',
   });

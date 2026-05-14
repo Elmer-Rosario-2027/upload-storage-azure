@@ -28,23 +28,25 @@ export interface UploadResult {
 const { getTransactionsActivity, generateExcelActivity, uploadToStorageActivity } = proxyActivities<{
   getTransactionsActivity: (payload: ReportRequest) => Promise<Transaction[]>;
   generateExcelActivity: (transactions: Transaction[]) => Promise<ExcelResult>;
-  uploadToStorageActivity: (excelResult: ExcelResult) => Promise<UploadResult>;
+  uploadToStorageActivity: (fileName: string, buffer: string) => Promise<UploadResult>;
 }>({
   startToCloseTimeout: '1 minute',
+  retry: {
+    maximumAttempts: 4,
+    initialInterval: '5 seconds',
+    maximumInterval: '5 seconds',
+    backoffCoefficient: 1,
+  },
 });
 
 export async function reportGenerationWorkflow(payload: ReportRequest): Promise<UploadResult> {
   console.log(`[Workflow] Iniciando workflow de generación de reporte para usuario: ${payload.userId}`);
-  
   const transactions = await getTransactionsActivity(payload);
   console.log(`[Workflow] Obtenidas ${transactions.length} transacciones para el usuario ${payload.userId}`);
-  
   const excelResult = await generateExcelActivity(transactions);
   console.log(`[Workflow] Excel generado: ${excelResult.fileName}`);
-  
-  const uploadResult = await uploadToStorageActivity(excelResult);
+  const uploadResult = await uploadToStorageActivity(excelResult.fileName, excelResult.buffer);
   console.log(`[Workflow] Archivo subido exitosamente: ${uploadResult.url}`);
-  
   console.log(`[Workflow] Workflow completado para usuario ${payload.userId}`);
   return uploadResult;
 }
