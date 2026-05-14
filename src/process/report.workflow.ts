@@ -40,11 +40,9 @@ const { getTransactionsActivity, generateExcelActivity, uploadToStorageActivity 
 });
 
 export async function reportGenerationWorkflow(payload: ReportRequest): Promise<UploadResult> {
-  console.log(`[Workflow] Iniciando workflow de generación de reporte para usuario: ${payload.userId}`);
+
   const transactions = await getTransactionsActivity(payload);
-  console.log(`[Workflow] Obtenidas ${transactions.length} transacciones para el usuario ${payload.userId}`);
   const excelResult = await generateExcelActivity(transactions);
-  console.log(`[Workflow] Excel generado: ${excelResult.fileName}`);
   const uploadResult = await uploadToStorageActivity(excelResult.fileName, excelResult.buffer);
   console.log(`[Workflow] Archivo subido exitosamente: ${uploadResult.url}`);
   console.log(`[Workflow] Workflow completado para usuario ${payload.userId}`);
