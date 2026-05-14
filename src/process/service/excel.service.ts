@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 export class ExcelService {
 
   async generateExcel(data: any[]) {
-
+    console.log(`[ExcelService] Generando Excel con ${data.length} filas de datos`);
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Transactions');
 
@@ -24,6 +24,7 @@ export class ExcelService {
 
     const fileName =`report-${uuid()}.xlsx`;
     const buffer =await workbook.xlsx.writeBuffer();
+    console.log(`[ExcelService] Excel generado: ${fileName} (${buffer.byteLength} bytes)`);
     return {
       fileName,
       buffer: Buffer.from(buffer),

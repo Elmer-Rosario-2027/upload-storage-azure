@@ -18,7 +18,7 @@ export class StorageService {
     fileName: string,
     buffer: Buffer,
   ) {
-
+    console.log(`[StorageService] Iniciando subida de archivo: ${fileName} (${buffer.length} bytes)`);
     const containerName =
       process.env.AZURE_STORAGE_CONTAINER!;
 
@@ -28,6 +28,7 @@ export class StorageService {
       );
 
     await containerClient.createIfNotExists();
+    console.log(`[StorageService] Contenedor verificado/creado: ${containerName}`);
 
     const blockBlobClient =
       containerClient.getBlockBlobClient(
@@ -35,6 +36,7 @@ export class StorageService {
       );
 
     await blockBlobClient.uploadData(buffer);
+    console.log(`[StorageService] Archivo subido exitosamente a: ${blockBlobClient.url}`);
 
     return {
       message: 'Archivo subido correctamente',

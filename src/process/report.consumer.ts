@@ -3,17 +3,32 @@ import {
   Payload,
 } from '@nestjs/microservices';
 import { Controller } from '@nestjs/common';
-import { SagaService } from './saga.service';
-
+import { Client } from '@temporalio/client';
+import { reportGenerationWorkflow } from './report.workflow';
+import type { ReportRequest } from './report.workflow';
 
 @Controller()
 export class ReportConsumer {
 
-  constructor(private readonly sagaService: SagaService) {}
+  private client: Client;
 
- @EventPattern('report-requested')
-  async handleReport(@Payload() payload: any) {
-    console.log('Received report request ', payload);
-    return await this.sagaService.process(payload);
+  constructor() {
+    this.client = new Client();
+  }
+
+  @EventPattern('report-requested')
+  async handleReport(@Payload() payload: ReportRequest) {
+    console.log(`[ReportConsumer] Evento 'report-requested' recibido con payload: ${JSON.stringify(payload)}`);
+
+    const handle = await this.client.workflow.start(reportGenerationWorkflow, {
+      taskQueue: 'report-queue',
+      workflowId: `report-${Date.now()}-${Math.random()}`,
+      args: [payload],
+    });
+
+    console.log(`[ReportConsumer] Workflow iniciado con ID: ${handle.workflowId}`);
+
+    // For demo, return the workflow ID immediately
+    return { workflowId: handle.workflowId };
   }
 }
