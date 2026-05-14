@@ -1,11 +1,11 @@
+import * as dotenv from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-import {
-  MicroserviceOptions,
-  Transport,
-} from '@nestjs/microservices';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { run } from './temporal.worker';
+
+dotenv.config();
 
 async function bootstrap() {
 
