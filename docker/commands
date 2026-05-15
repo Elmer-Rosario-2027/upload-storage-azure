@@ -4,3 +4,5 @@ docker run --name rosario-postgres -e POSTGRES_USER=rosario -e POSTGRES_PASSWORD
 
 
 npx prisma generate
+
+Cliente (A) → HTTP → Gateway → Kafka → ReportConsumer → Temporal (Cloud) → Worker (C)
