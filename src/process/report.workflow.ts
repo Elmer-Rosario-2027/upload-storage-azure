@@ -25,14 +25,39 @@ export interface UploadResult {
   url: string;
 }
 
-const { getTransactionsActivity, generateExcelActivity, uploadToStorageActivity } = proxyActivities<{
+// Actividad 1: 1 reintento
+const { getTransactionsActivity } = proxyActivities<{
   getTransactionsActivity: (payload: ReportRequest) => Promise<Transaction[]>;
+}>({
+  startToCloseTimeout: '1 minute',
+  retry: {
+    maximumAttempts: 1,
+    initialInterval: '5 seconds',
+    maximumInterval: '5 seconds',
+    backoffCoefficient: 1,
+  },
+});
+
+// Actividad 2: 2 reintentos
+const { generateExcelActivity } = proxyActivities<{
   generateExcelActivity: (transactions: Transaction[]) => Promise<ExcelResult>;
+}>({
+  startToCloseTimeout: '1 minute',
+  retry: {
+    maximumAttempts: 2,
+    initialInterval: '5 seconds',
+    maximumInterval: '5 seconds',
+    backoffCoefficient: 1,
+  },
+});
+
+// Actividad 3: 6 reintentos
+const { uploadToStorageActivity } = proxyActivities<{
   uploadToStorageActivity: (fileName: string, buffer: string) => Promise<UploadResult>;
 }>({
   startToCloseTimeout: '1 minute',
   retry: {
-    maximumAttempts: 3,
+    maximumAttempts: 6,
     initialInterval: '5 seconds',
     maximumInterval: '5 seconds',
     backoffCoefficient: 1,
