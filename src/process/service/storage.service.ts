@@ -11,6 +11,8 @@ export class StorageService {
   }
 
   async upload(fileName: string, buffer: Buffer | string) {
+    //throw new Error('Error en upload de StorageService');
+
     const binaryBuffer = typeof buffer === 'string' ? Buffer.from(buffer, 'base64') : buffer;
     const containerName = process.env.AZURE_STORAGE_CONTAINER!;
     const containerClient = this.blobServiceClient.getContainerClient(containerName);

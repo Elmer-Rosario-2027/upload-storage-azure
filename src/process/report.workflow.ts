@@ -32,7 +32,7 @@ const { getTransactionsActivity, generateExcelActivity, uploadToStorageActivity 
 }>({
   startToCloseTimeout: '1 minute',
   retry: {
-    maximumAttempts: 4,
+    maximumAttempts: 3,
     initialInterval: '5 seconds',
     maximumInterval: '5 seconds',
     backoffCoefficient: 1,
